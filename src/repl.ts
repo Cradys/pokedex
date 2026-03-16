@@ -1,5 +1,6 @@
 import { createInterface } from "node:readline"
 import { stdin, stdout } from "node:process"
+import { getCommands } from "./commands.js"
 
 export function cleanInput(input: string): string[] {
   return input
@@ -21,12 +22,32 @@ export function startREPL(): void {
 
 
   repl.on("line", (input) => {
-    const words = cleanInput(input)
-    if (!words) {
-      repl.prompt()
+    const words = cleanInput(input);
+    if (words.length === 0) {
+      repl.prompt();
+      return;
     }
-    console.log(`Your command was: ${words[0]}`)
-    repl.prompt()
-  })
 
+    const commandName = words[0];
+
+    const commands = getCommands();
+    const cmd = commands[commandName];
+    if (!cmd) {
+      console.log(
+        `Unknown command: "${commandName}". Type "help" for a list of commands.`,
+      );
+      repl.prompt();
+      return;
+    }
+
+    try {
+      cmd.callback(commands);
+    } catch (e) {
+      console.log(e);
+    }
+
+    repl.prompt();
+  })
 }
+
+
