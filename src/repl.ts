@@ -16,5 +16,17 @@ export function startREPL(): void {
     prompt: "Pokedex >"
   })
 
+
   repl.prompt()
+
+
+  repl.on("line", (input) => {
+    const words = cleanInput(input)
+    if (!words) {
+      repl.prompt()
+    }
+    console.log(`Your command was: ${words[0]}`)
+    repl.prompt()
+  })
+
 }
