@@ -10,31 +10,37 @@ export class Cache {
   #interval: number
 
   constructor(interval: number) {
+    this.#cache
     this.#interval = interval
     this.#startReapLoop()
   }
 
   add<T>(key: string, val: T): void {
-      this.#cache.set(key, {
-          createdAt: Date.now(),
-          val: val
-      })
-  }
-
-  get<T>(key: string): CacheEntry<T> | undefined {
-      return this.#cache.get(key)
-  }
-
-  #reap() {
-    this.#cache.forEach((value, key) => {
-      if (value.createdAt < (Date.now()-this.#interval)) {
-        this.#cache.delete(key)
-      }
+    this.#cache.set(key, {
+        createdAt: Date.now(),
+        val: val
     })
   }
 
+  get<T>(key: string) {
+    const entry = this.#cache.get(key);
+    if (entry !== undefined) {
+      return entry.val as T;
+    }
+    return undefined;
+  }
+
+  #reap() {
+    const now = Date.now()
+    for (const [key, record] of this.#cache) {
+      if (now - record.createdAt > this.#interval) {
+        this.#cache.delete(key);
+      }
+    }
+  }
+
   #startReapLoop() {
-    this.#reapIntervalId = setInterval(this.#reap, this.#interval)
+    this.#reapIntervalId = setInterval(() => this.#reap(), this.#interval)
   }
 
   stopReapLoop() {
