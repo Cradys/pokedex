@@ -35,7 +35,9 @@ export class Cache {
     for (const [key, record] of this.#cache) {
       if (now - record.createdAt > this.#interval) {
         this.#cache.delete(key);
+        continue
       }
+      break
     }
   }
 
