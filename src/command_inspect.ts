@@ -5,20 +5,20 @@ export async function commandInspect(state: State, ...args: string[]) {
     throw new Error("you must provide a pokemon name");
   }
 
-  const caughtPokemon = state.caughtPokemon[args[0]]
-  if (!caughtPokemon) {
+  const pokemons = state.caughtPokemon[args[0]]
+  if (!pokemons) {
     console.log("not found caught the Pokemon")
   }
 
-  console.log(`Name: ${caughtPokemon.name}`)
-  console.log(`Height: ${caughtPokemon.height}`)
-  console.log(`Weight: ${caughtPokemon.weight}`)
+  console.log(`Name: ${pokemons.name}`)
+  console.log(`Height: ${pokemons.height}`)
+  console.log(`Weight: ${pokemons.weight}`)
   console.log(`Stats:`)
-  caughtPokemon.stats.forEach(stat => {
+  pokemons.stats.forEach(stat => {
     console.log(`   - ${stat.stat.name}: ${stat.base_stat}`)
   })
   console.log(`Types: `)
-  caughtPokemon.types.forEach(type => {
+  pokemons.types.forEach(type => {
     console.log(`   - ${type.type.name}`)
   })
 }
