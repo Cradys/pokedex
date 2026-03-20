@@ -14,6 +14,7 @@ export async function commandCatch(state: State, ...args: string[]) {
   if (roll < chance) {
     state.caughtPokemon[response.name] = response
     console.log(`Pokemon ${response.name} catched and add to inventory`)
+    return
   }
   console.log(`Pokemon ${response.name} run away`)
 }
