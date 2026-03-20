@@ -10,72 +10,40 @@ export class PokeAPI {
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
     const url = pageURL || `${PokeAPI.baseURL}/location-area`
-    const cache = this.#cache.get<ShallowLocations>(url)
-    if (cache) {
-      return cache
-    }
-    
-    try {
-      const response = await fetch(url)
 
-      if (!response.ok) {
-          throw new Error(`${response.status} ${response.statusText}`);
-      }
-      const locations: ShallowLocations = await response.json()
-      this.#cache.add(url, locations)
-      return locations
-    } catch (e) {
-      throw new Error(`Error fetching locations: ${(e as Error).message}`)
-    }
+    return this.#fetchData<ShallowLocations>(url)
   }
 
   async fetchLocation(locationName: string): Promise<Location> {
     const url = `${PokeAPI.baseURL}/location-area/${locationName}`;
 
-    const cached = this.#cache.get<Location>(url);
-    if (cached) {
-      return cached;
-    }
-
-    try {
-      const resp = await fetch(url);
-
-      if (!resp.ok) {
-        throw new Error(`${resp.status} ${resp.statusText}`);
-      }
-
-      const location: Location = await resp.json();
-      this.#cache.add(url, location);
-      return location;
-    } catch (e) {
-      throw new Error(
-        `Error fetching location '${locationName}': ${(e as Error).message}`,
-      );
-    }
+    return this.#fetchData<Location>(url)
   }
 
   async fetchPokemon(pokemonName: string): Promise<Pokemon> {
     const url = `${PokeAPI.baseURL}/pokemon/${pokemonName}`
 
-    const cached = this.#cache.get<Pokemon>(url);
-    if (cached) {
-      return cached;
+    return this.#fetchData<Pokemon>(url)
+  }
+
+  async #fetchData<T> (req_url: string): Promise<T> {
+    const cache = this.#cache.get<T>(req_url)
+    if (cache) {
+      return cache
     }
-
+    
     try {
-      const resp = await fetch(url);
+      const response = await fetch(req_url)
 
-      if (!resp.ok) {
-        throw new Error(`${resp.status} ${resp.statusText}`);
+      if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
       }
-
-      const pokemon: Pokemon = await resp.json();
-      this.#cache.add(url, pokemon);
-      return pokemon;
+      
+      const locations: T = await response.json()
+      this.#cache.add(req_url, locations)
+      return locations
     } catch (e) {
-      throw new Error(
-        `Error fetching pokemon '${pokemonName}': ${(e as Error).message}`,
-      );
+      throw new Error(`Error fetching locations: ${(e as Error).message}`)
     }
   }
 }
